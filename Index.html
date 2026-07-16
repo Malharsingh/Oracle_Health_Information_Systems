@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Health — Erie St. Clair Case Study</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#1a1a1a;background:#f4f5f7;padding:0}
+.page-wrap{max-width:900px;margin:0 auto;padding:24px 20px 60px}
+header{background:#1a1a2e;color:#fff;padding:40px 32px 32px;border-radius:12px;margin-bottom:32px}
+header h1{font-size:26px;font-weight:700;margin-bottom:8px;line-height:1.3}
+header p{font-size:14px;color:#b0b8cc;margin-top:4px}
+.tag{display:inline-block;background:#2a3a5e;color:#a0c4ff;font-size:12px;padding:3px 10px;border-radius:20px;margin-right:6px;margin-top:8px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+nav a{font-size:13px;color:#1a5fb4;text-decoration:none;padding:5px 14px;border:1px solid #c5d8f5;border-radius:20px;background:#fff;transition:all .15s}
+nav a:hover{background:#1a5fb4;color:#fff;border-color:#1a5fb4}
+section{background:#fff;border-radius:12px;padding:28px 32px;margin-bottom:24px;border:1px solid #e5e9f0}
+h2{font-size:19px;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e5e9f0;color:#0f1e3a}
+h3{font-size:16px;font-weight:700;margin:20px 0 8px;color:#1a3060}
+p{margin-bottom:12px;color:#2a2a2a}
+ul,ol{padding-left:22px;margin-bottom:12px}
+li{margin-bottom:6px;color:#2a2a2a}
+.callout{background:#f0f4ff;border-left:4px solid #3a7bd5;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:14px}
+.callout strong{display:block;margin-bottom:4px;color:#1a3060}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th{background:#1a1a2e;color:#fff;text-align:left;padding:10px 14px;font-weight:600}
+td{padding:9px 14px;border-bottom:1px solid #e5e9f0;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#f8f9fc}
+.diagram-card{background:#f0f4f8;border:1px solid #d0daea;border-radius:10px;padding:20px;margin:20px 0}
+.diagram-card h4{font-size:14px;font-weight:700;color:#1a3060;margin-bottom:14px;text-align:center;text-transform:uppercase;letter-spacing:.5px}
+svg text{font-family:Arial,sans-serif}
+.phase{border:1px solid #d0daea;border-radius:10px;margin-bottom:14px;overflow:hidden}
+.phase-header{background:#1a1a2e;color:#fff;padding:11px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.phase-num{background:#3a7bd5;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.phase-header span{font-size:15px;font-weight:600;flex:1}
+.phase-chevron{font-size:18px;transition:transform .2s}
+.phase-body{padding:16px 20px;display:none}
+.phase-body.open{display:block}
+.phase-body ol{padding-left:22px}
+.phase-body li{margin-bottom:8px;font-size:14px}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.gap-card{border:1px solid #e0e8f5;border-radius:8px;padding:14px 16px}
+.gap-card h4{font-size:14px;font-weight:700;color:#1a3060;margin-bottom:6px}
+.gap-card p{font-size:13px;margin:0;color:#444}
+.quick-win-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:12px;padding:2px 8px;border-radius:10px;font-weight:600;margin-bottom:4px}
+@media(max-width:600px){.gap-grid{grid-template-columns:1fr}header{padding:24px 20px}section{padding:20px 18px}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<header>
+  <h1>Oracle Health Information Systems<br>in Canadian Healthcare</h1>
+  <p>Case Study: Erie St. Clair Region, Ontario</p>
+  <div>
+    <span class="tag">Oracle Health / Cerner</span>
+    <span class="tag">PowerChart · FirstNet</span>
+    <span class="tag">FHIR R4 · HL7</span>
+    <span class="tag">PHIPA · PIPEDA</span>
+    <span class="tag">Erie St. Clair</span>
+  </div>
+  <p style="margin-top:14px;font-size:13px;color:#8090aa">Malharsingh Thakur &nbsp;|&nbsp; M.Sc. Computer Science, University of Windsor &nbsp;|&nbsp; 2026</p>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#dataflow">Data Flow</a>
+  <a href="#integration">Integration Map</a>
+  <a href="#challenges">Challenges</a>
+  <a href="#whatworks">What Works</a>
+  <a href="#gaps">Gaps</a>
+  <a href="#improvements">Improvements</a>
+  <a href="#quickwins">Quick Wins</a>
+</nav>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <h2>1. Case Study Overview</h2>
+  <p>This case study examines the deployment and performance of Oracle Health (formerly Cerner) Information Systems within the Erie St. Clair (ESC) health region in southwestern Ontario, Canada. The ESC region serves approximately 575,000 residents across Windsor-Essex, Lambton, and Chatham-Kent — a geography that presents a unique set of clinical, demographic, and operational challenges for digital health implementation.</p>
+  <div class="callout">
+    <strong>Region at a glance</strong>
+    Population: ~575,000 &nbsp;|&nbsp; Anchor: Windsor Regional Hospital &nbsp;|&nbsp; Partners: Bluewater Health, CKHA, Hotel-Dieu Grace &nbsp;|&nbsp; Notable: Cross-border Windsor–Detroit patient population
+  </div>
+  <p>The study covers PowerChart, FirstNet, Pharmacy Manager, and HealtheIntent — their integration with Ontario's provincial systems — and practical insights from the ESC deployment experience.</p>
+</section>
+
+<!-- ARCHITECTURE DIAGRAM -->
+<section id="architecture">
+  <h2>2. System Architecture</h2>
+  <p>Oracle Health's platform is structured as a layered enterprise system — from cloud infrastructure at the base, through clinical application modules, through integration middleware, and out to provincial Ontario systems.</p>
+  <div class="diagram-card">
+    <h4>Diagram 1 — Oracle Health System Architecture (Canadian Deployment)</h4>
+    <svg width="100%" viewBox="0 0 820 530" role="img" aria-label="Oracle Health layered architecture diagram">
+    <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <!-- Layer 1 Infra -->
+    <rect x="10" y="10" width="800" height="58" rx="10" fill="#e8eaf0" stroke="#9099b0" stroke-width="0.8"/>
+    <text x="410" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">Infrastructure layer</text>
+    <text x="410" y="53" text-anchor="middle" font-size="11" fill="#444">Oracle Cloud / Canadian-hosted data centres (Ontario · BC) — PHIPA / PIPEDA compliant</text>
+    <!-- Layer 2 DB -->
+    <rect x="10" y="80" width="800" height="48" rx="10" fill="#dde3ee" stroke="#9099b0" stroke-width="0.8"/>
+    <text x="410" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">Database layer — Oracle DB / MS SQL Server</text>
+    <text x="410" y="118" text-anchor="middle" font-size="11" fill="#444">Clinical data repository · audit logs · patient master index</text>
+    <!-- Clinical apps label -->
+    <text x="18" y="152" font-size="12" font-weight="700" fill="#1a1a2e">Clinical application layer</text>
+    <!-- PowerChart -->
+    <rect x="10" y="162" width="188" height="70" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="104" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">PowerChart</text>
+    <text x="104" y="204" text-anchor="middle" font-size="11" fill="#4a3a80">Physician EHR</text>
+    <text x="104" y="220" text-anchor="middle" font-size="11" fill="#4a3a80">CPOE · notes · orders</text>
+    <!-- FirstNet -->
+    <rect x="210" y="162" width="188" height="70" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="304" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">FirstNet</text>
+    <text x="304" y="204" text-anchor="middle" font-size="11" fill="#4a3a80">Emergency dept.</text>
+    <text x="304" y="220" text-anchor="middle" font-size="11" fill="#4a3a80">CTAS · triage · flow</text>
+    <!-- Pharmacy -->
+    <rect x="410" y="162" width="188" height="70" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="504" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">Pharmacy Mgr</text>
+    <text x="504" y="204" text-anchor="middle" font-size="11" fill="#4a3a80">Medication mgmt</text>
+    <text x="504" y="220" text-anchor="middle" font-size="11" fill="#4a3a80">Formulary · MAR</text>
+    <!-- HealtheIntent -->
+    <rect x="610" y="162" width="200" height="70" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="710" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">HealtheIntent</text>
+    <text x="710" y="204" text-anchor="middle" font-size="11" fill="#4a3a80">Population health</text>
+    <text x="710" y="220" text-anchor="middle" font-size="11" fill="#4a3a80">Longitudinal record</text>
+    <!-- Integration label -->
+    <text x="18" y="252" font-size="12" font-weight="700" fill="#1a1a2e">Integration layer</text>
+    <!-- CIE -->
+    <rect x="10" y="262" width="380" height="58" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="200" y="285" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Cerner Integration Engine (CIE)</text>
+    <text x="200" y="306" text-anchor="middle" font-size="11" fill="#1a5a50">HL7 v2 message transformation · routing</text>
+    <!-- Ignite -->
+    <rect x="406" y="262" width="404" height="58" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="608" y="285" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Ignite FHIR R4 API Platform</text>
+    <text x="608" y="306" text-anchor="middle" font-size="11" fill="#1a5a50">OAuth 2.0 · RESTful · Patient / Observation / MedicationRequest</text>
+    <!-- arrows -->
+    <line x1="410" y1="232" x2="410" y2="260" stroke="#888" stroke-width="1.2" marker-end="url(#a1)"/>
+    <!-- Provincial label -->
+    <text x="18" y="342" font-size="12" font-weight="700" fill="#1a1a2e">Provincial connections</text>
+    <!-- Provincial boxes -->
+    <rect x="10" y="352" width="178" height="58" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="99" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">OLIS</text>
+    <text x="99" y="395" text-anchor="middle" font-size="11" fill="#8a3020">Lab results</text>
+    <rect x="202" y="352" width="178" height="58" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="291" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">Drug viewer</text>
+    <text x="291" y="395" text-anchor="middle" font-size="11" fill="#8a3020">ON medication Hx</text>
+    <rect x="394" y="352" width="178" height="58" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="483" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">Client registry</text>
+    <text x="483" y="395" text-anchor="middle" font-size="11" fill="#8a3020">OHIP patient ID</text>
+    <rect x="586" y="352" width="224" height="58" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="698" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">CIHI / NACRS / DAD</text>
+    <text x="698" y="395" text-anchor="middle" font-size="11" fill="#8a3020">Regulatory reporting</text>
+    <!-- Arrows: integration to provincial -->
+    <line x1="200" y1="320" x2="99" y2="350" stroke="#888" stroke-width="1" marker-end="url(#a1)"/>
+    <line x1="240" y1="320" x2="291" y2="350" stroke="#888" stroke-width="1" marker-end="url(#a1)"/>
+    <line x1="560" y1="320" x2="483" y2="350" stroke="#888" stroke-width="1" marker-end="url(#a1)"/>
+    <line x1="650" y1="320" x2="698" y2="350" stroke="#888" stroke-width="1" marker-end="url(#a1)"/>
+    <!-- Legend -->
+    <rect x="10" y="432" width="14" height="14" rx="3" fill="#e8e0f8" stroke="#7c6fc0"/>
+    <text x="30" y="443" font-size="11" fill="#333">Clinical modules</text>
+    <rect x="160" y="432" width="14" height="14" rx="3" fill="#d4ede8" stroke="#2a8c7a"/>
+    <text x="180" y="443" font-size="11" fill="#333">Integration</text>
+    <rect x="290" y="432" width="14" height="14" rx="3" fill="#fde8d8" stroke="#c0622a"/>
+    <text x="310" y="443" font-size="11" fill="#333">Provincial systems</text>
+    <rect x="450" y="432" width="14" height="14" rx="3" fill="#e8eaf0" stroke="#9099b0"/>
+    <text x="470" y="443" font-size="11" fill="#333">Infrastructure</text>
+    </svg>
+  </div>
+
+  <table>
+    <tr><th>Module</th><th>Role in ESC deployment</th></tr>
+    <tr><td><strong>PowerChart</strong></td><td>Primary physician EHR — clinical notes, problem lists, CPOE, medication orders</td></tr>
+    <tr><td><strong>FirstNet</strong></td><td>Emergency dept. management — CTAS triage, bed tracking, ED flow</td></tr>
+    <tr><td><strong>Pharmacy Manager</strong></td><td>Medication management — formulary, MAR, drug interaction alerts</td></tr>
+    <tr><td><strong>HealtheIntent</strong></td><td>Population health — longitudinal patient records, high-risk identification</td></tr>
+  </table>
+</section>
+
+<!-- DATA FLOW -->
+<section id="dataflow">
+  <h2>3. Patient Data Flow</h2>
+  <p>From ED arrival to provincial reporting — how a single patient encounter moves through the Oracle Health ecosystem.</p>
+  <div class="diagram-card">
+    <h4>Diagram 2 — Patient Data Flow Through Oracle Health</h4>
+    <svg width="100%" viewBox="0 0 820 580" role="img" aria-label="Patient data flow diagram">
+    <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <!-- Step 1 -->
+    <rect x="280" y="10" width="260" height="56" rx="8" fill="#e8eaf0" stroke="#9099b0" stroke-width="0.8"/>
+    <text x="410" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a2e">Patient arrives at ED</text>
+    <text x="410" y="52" text-anchor="middle" font-size="11" fill="#444">ADT event sent to Oracle Health</text>
+    <line x1="410" y1="66" x2="410" y2="90" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Step 2 -->
+    <rect x="280" y="90" width="260" height="56" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="410" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Registration</text>
+    <text x="410" y="132" text-anchor="middle" font-size="11" fill="#1a5a50">OHIP verified via client registry</text>
+    <line x1="410" y1="146" x2="410" y2="170" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Step 3 -->
+    <rect x="280" y="170" width="260" height="56" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="410" y="193" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">Triage — FirstNet</text>
+    <text x="410" y="212" text-anchor="middle" font-size="11" fill="#4a3a80">CTAS score · vitals · chief complaint</text>
+    <line x1="410" y1="226" x2="410" y2="250" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Step 4 -->
+    <rect x="280" y="250" width="260" height="56" rx="8" fill="#e8e0f8" stroke="#7c6fc0" stroke-width="0.8"/>
+    <text x="410" y="273" text-anchor="middle" font-size="13" font-weight="700" fill="#2e1a6e">Clinical assessment — PowerChart</text>
+    <text x="410" y="292" text-anchor="middle" font-size="11" fill="#4a3a80">CPOE · medication reconciliation</text>
+    <!-- Branch arrows -->
+    <line x1="330" y1="306" x2="190" y2="330" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <line x1="490" y1="306" x2="630" y2="330" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Step 5a Lab -->
+    <rect x="90" y="330" width="200" height="56" rx="8" fill="#fff4d4" stroke="#b08020" stroke-width="0.8"/>
+    <text x="190" y="353" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4000">Lab orders</text>
+    <text x="190" y="372" text-anchor="middle" font-size="11" fill="#7a5800">Sent to LIS · results via OLIS</text>
+    <!-- Step 5b Med -->
+    <rect x="530" y="330" width="200" height="56" rx="8" fill="#fff4d4" stroke="#b08020" stroke-width="0.8"/>
+    <text x="630" y="353" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4000">Medication orders</text>
+    <text x="630" y="372" text-anchor="middle" font-size="11" fill="#7a5800">Pharmacy Mgr · drug profile check</text>
+    <!-- Down arrows -->
+    <line x1="190" y1="386" x2="190" y2="410" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <line x1="630" y1="386" x2="630" y2="410" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Step 6a -->
+    <rect x="90" y="410" width="200" height="56" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="190" y="433" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Results in chart</text>
+    <text x="190" y="452" text-anchor="middle" font-size="11" fill="#1a5a50">HL7 ORU · auto-filed to chart</text>
+    <!-- Step 6b -->
+    <rect x="530" y="410" width="200" height="56" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="630" y="433" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Dispense · administer</text>
+    <text x="630" y="452" text-anchor="middle" font-size="11" fill="#1a5a50">MAR updated in PowerChart</text>
+    <!-- Merge to discharge -->
+    <line x1="190" y1="466" x2="330" y2="500" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <line x1="630" y1="466" x2="490" y2="500" stroke="#888" stroke-width="1.2" marker-end="url(#a2)"/>
+    <!-- Discharge -->
+    <rect x="280" y="500" width="260" height="56" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="410" y="523" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">Discharge + reporting</text>
+    <text x="410" y="542" text-anchor="middle" font-size="11" fill="#8a3020">DAD / NACRS extract → CIHI</text>
+    </svg>
+  </div>
+  <ul>
+    <li><strong>OHIP verification</strong> at registration queries the provincial client registry in real time — linking the encounter to the provincial patient identifier.</li>
+    <li><strong>Lab orders</strong> trigger HL7 ORM messages to the LIS; results return as HL7 ORU messages, auto-filed to the PowerChart chart via CIE.</li>
+    <li><strong>Medication orders</strong> are checked against Ontario's Drug Profile Viewer — surfaces community pharmacy medication history not available in default US configurations.</li>
+    <li><strong>Discharge</strong> generates structured CIHI extracts (DAD inpatient / NACRS ED) — a mandatory provincial reporting obligation unique to Canadian deployments.</li>
+  </ul>
+</section>
+
+<!-- INTEGRATION MAP -->
+<section id="integration">
+  <h2>4. Provincial Integration Map — Erie St. Clair</h2>
+  <p>Oracle Health at Windsor Regional Hospital sits at the centre of a regional and provincial ecosystem. Solid arrows show active data exchange; dashed arrows show governance and standards relationships.</p>
+  <div class="diagram-card">
+    <h4>Diagram 3 — Integration Map (ESC Region)</h4>
+    <svg width="100%" viewBox="0 0 820 540" role="img" aria-label="Oracle Health ESC integration map">
+    <defs>
+      <marker id="a3s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#3a5a9a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="a3d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+    <!-- Centre -->
+    <rect x="290" y="200" width="240" height="88" rx="12" fill="#2e1a6e" stroke="#5a3ab0" stroke-width="1"/>
+    <text x="410" y="232" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Oracle Health</text>
+    <text x="410" y="252" text-anchor="middle" font-size="11" fill="#c0b0f0">Millennium + Ignite FHIR</text>
+    <text x="410" y="270" text-anchor="middle" font-size="11" fill="#c0b0f0">Windsor Regional Hospital</text>
+    <!-- Top: Ontario Health -->
+    <rect x="270" y="20" width="280" height="54" rx="8" fill="#d4ede8" stroke="#2a8c7a" stroke-width="0.8"/>
+    <text x="410" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="#0a3d34">Ontario Health (Digital)</text>
+    <text x="410" y="60" text-anchor="middle" font-size="11" fill="#1a5a50">Oversight · standards · funding</text>
+    <line x1="410" y1="74" x2="410" y2="198" stroke="#888" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#a3d)"/>
+    <!-- TL: OLIS -->
+    <rect x="30" y="100" width="180" height="54" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="120" y="122" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">OLIS</text>
+    <text x="120" y="140" text-anchor="middle" font-size="11" fill="#8a3020">Lab results (HL7 v2)</text>
+    <line x1="210" y1="130" x2="288" y2="232" stroke="#3a5a9a" stroke-width="1.2" marker-end="url(#a3s)"/>
+    <!-- TR: Drug Viewer -->
+    <rect x="610" y="100" width="180" height="54" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="700" y="122" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">Drug profile viewer</text>
+    <text x="700" y="140" text-anchor="middle" font-size="11" fill="#8a3020">Medication history</text>
+    <line x1="610" y1="130" x2="532" y2="232" stroke="#3a5a9a" stroke-width="1.2" marker-end="url(#a3s)"/>
+    <!-- ML: Client Registry -->
+    <rect x="30" y="218" width="200" height="54" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="130" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">Client registry</text>
+    <text x="130" y="258" text-anchor="middle" font-size="11" fill="#8a3020">OHIP patient identity</text>
+    <line x1="230" y1="245" x2="288" y2="248" stroke="#3a5a9a" stroke-width="1.2" marker-end="url(#a3s)"/>
+    <!-- MR: PACS -->
+    <rect x="590" y="218" width="200" height="54" rx="8" fill="#fde8d8" stroke="#c0622a" stroke-width="0.8"/>
+    <text x="690" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#6a2010">PACS / DI repository</text>
+    <text x="690" y="258" text-anchor="middle" font-size="11" fill="#8a3020">Radiology · imaging</text>
+    <line x1="590" y1="245" x2="532" y2="248" stroke="#3a5a9a" stroke-width="1.2" marker-end="url(#a3s)"/>
+    <!-- BL: ESC Partners -->
+    <rect x="30" y="360" width="220" height="54" rx="8" fill="#dce8fa" stroke="#3a6ab0" stroke-width="0.8"/>
+    <text x="140" y="382" text-anchor="middle" font-size="13" font-weight="700" fill="#0a2a60">ESC regional partners</text>
+    <text x="140" y="400" text-anchor="middle" font-size="11" fill="#1a3a80">Bluewater · CKHA · HDGH</text>
+    <line x1="230" y1="385" x2="315" y2="290" stroke="#888" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#a3d)"/>
+    <!-- Bottom: CIHI -->
+    <rect x="270" y="430" width="280" height="54" rx="8" fill="#fff4d4" stroke="#b08020" stroke-width="0.8"/>
+    <text x="410" y="452" text-anchor="middle" font-size="13" font-weight="700" fill="#5a4000">CIHI — NACRS / DAD</text>
+    <text x="410" y="470" text-anchor="middle" font-size="11" fill="#7a5800">Mandatory provincial reporting</text>
+    <line x1="410" y1="288" x2="410" y2="428" stroke="#3a5a9a" stroke-width="1.2" marker-end="url(#a3s)"/>
+    <!-- BR: Infoway -->
+    <rect x="570" y="360" width="220" height="54" rx="8" fill="#dce8fa" stroke="#3a6ab0" stroke-width="0.8"/>
+    <text x="680" y="382" text-anchor="middle" font-size="13" font-weight="700" fill="#0a2a60">Canada Health Infoway</text>
+    <text x="680" y="400" text-anchor="middle" font-size="11" fill="#1a3a80">Pan-Canadian FHIR framework</text>
+    <line x1="570" y1="385" x2="505" y2="290" stroke="#888" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#a3d)"/>
+    <!-- Legend -->
+    <line x1="30" y1="508" x2="80" y2="508" stroke="#3a5a9a" stroke-width="1.5" marker-end="url(#a3s)"/>
+    <text x="88" y="513" font-size="11" fill="#333">Active data exchange</text>
+    <line x1="260" y1="508" x2="310" y2="508" stroke="#888" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a3d)"/>
+    <text x="318" y="513" font-size="11" fill="#333">Governance / standards</text>
+    </svg>
+  </div>
+  <table>
+    <tr><th>Connected system</th><th>Integration type / purpose</th></tr>
+    <tr><td>OLIS</td><td>HL7 v2 — lab result delivery into PowerChart</td></tr>
+    <tr><td>Ontario Drug Profile Viewer</td><td>Web service — patient medication history at order entry</td></tr>
+    <tr><td>Provincial client registry</td><td>HL7 v2 MPI — OHIP identity resolution at registration</td></tr>
+    <tr><td>PACS / DI repository</td><td>DICOM + HL7 — radiology orders and imaging results</td></tr>
+    <tr><td>CIHI NACRS / DAD</td><td>Structured extract — mandatory ED and inpatient reporting</td></tr>
+    <tr><td>ESC regional partners</td><td>HL7 v2 ADT — patient movement across ESC facilities</td></tr>
+    <tr><td>Canada Health Infoway FHIR</td><td>FHIR R4 alignment — emerging pan-Canadian standard</td></tr>
+    <tr><td>Ontario Health (Digital)</td><td>Governance — standards compliance, investment oversight</td></tr>
+  </table>
+</section>
+
+<!-- CHALLENGES -->
+<section id="challenges">
+  <h2>5. Implementation Challenges</h2>
+  <h3>Workflow localization</h3>
+  <p>Oracle Health is built on a US-market baseline. Canadian deployment requires substantial configuration:</p>
+  <ul>
+    <li>Medication formularies must use Ontario Drug Benefit (ODB) codes — not US NDC codes</li>
+    <li>Clinical documentation must conform to Ontario regulatory college standards</li>
+    <li>Order sets must reference CMA guidelines and provincial clinical standards</li>
+    <li>CTAS (Canadian Triage and Acuity Scale) must replace the default US ESI triage system in FirstNet</li>
+  </ul>
+  <h3>Alert fatigue</h3>
+  <p>CPOE in PowerChart generates CDS alerts for drug interactions and allergy contraindications. Without careful calibration, alert volume desensitizes clinicians — a documented patient safety risk requiring ongoing governance.</p>
+  <h3>Integration maintenance burden</h3>
+  <p>Provincial systems (OLIS, DPV, client registry) upgrade independently and can break existing Oracle Health integrations without notice. Dedicated integration monitoring and maintenance capacity is essential but often underbudgeted.</p>
+  <h3>Timeline and cost realities</h3>
+  <table>
+    <tr><th>Challenge</th><th>ESC context</th></tr>
+    <tr><td>Go-live timeline</td><td>Typical: 24–36 months from contract to full multi-domain go-live</td></tr>
+    <tr><td>Configuration effort</td><td>Order sets, documentation templates, formulary: 12–18 months of dedicated build</td></tr>
+    <tr><td>Training</td><td>Multi-site, multi-role — requires sustained investment beyond initial go-live</td></tr>
+    <tr><td>Post-live optimization</td><td>Frequently under-resourced; critical for realizing projected clinical benefits</td></tr>
+  </table>
+</section>
+
+<!-- WHAT WORKS -->
+<section id="whatworks">
+  <h2>6. What Works Well</h2>
+  <ul>
+    <li><strong>Modular deployment:</strong> Organizations activate clinical domains incrementally — reduces risk and aligns with constrained public sector capital budgets.</li>
+    <li><strong>FHIR R4 via Ignite:</strong> Aligned with Canada Health Infoway's pan-Canadian FHIR strategy — enables future provincial interoperability without custom HL7 development.</li>
+    <li><strong>Ontario reference network:</strong> Multiple Ontario hospital reference sites enable knowledge sharing and reduce first-mover risk.</li>
+    <li><strong>Cloud hosting options:</strong> Oracle Health's Seamless hosted deployment reduces per-hospital infrastructure burden.</li>
+    <li><strong>HealtheIntent population health:</strong> Aggregates longitudinal patient data across encounters — high-value for ESC's chronic disease management priorities.</li>
+  </ul>
+</section>
+
+<!-- GAPS -->
+<section id="gaps">
+  <h2>7. Identified Gaps</h2>
+  <div class="gap-grid">
+    <div class="gap-card">
+      <h4>Patient-facing access</h4>
+      <p>MyChart portal is significantly underutilized in Ontario. No provincial portal activation strategy, limited multilingual support.</p>
+    </div>
+    <div class="gap-card">
+      <h4>SDOH data capture</h4>
+      <p>Platform supports SDOH screening but no standardized Canadian coding framework. Documented SDOH data rarely drives care interventions.</p>
+    </div>
+    <div class="gap-card">
+      <h4>Analytics underutilization</h4>
+      <p>HealtheIntent capabilities underused due to insufficient analytics workforce and incomplete provincial data integration.</p>
+    </div>
+    <div class="gap-card">
+      <h4>Rural digital divide</h4>
+      <p>Oracle Health's total cost of ownership exceeds capacity of smaller rural and community hospitals, deepening intra-regional fragmentation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMPROVEMENTS -->
+<section id="improvements">
+  <h2>8. How It Can Be Implemented or Improved</h2>
+  <p>A five-phase framework for successful Oracle Health deployment in the Canadian healthcare context:</p>
+
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num">1</div>
+      <span>Readiness Assessment (Pre-implementation)</span>
+      <span class="phase-chevron">▼</span>
+    </div>
+    <div class="phase-body open">
+      <ol>
+        <li>Conduct a digital health maturity assessment using Canada Health Infoway's model — establish baseline across technical infrastructure, clinical leadership, workforce literacy, and financial capacity.</li>
+        <li>Audit network infrastructure: wireless coverage in all clinical areas, endpoint device currency, server capacity and redundancy.</li>
+        <li>Map all existing provincial integrations (OLIS, DPV, client registry, PACS) — identify which require re-engineering for Oracle Health compatibility.</li>
+        <li>Engage Ontario Health (Digital) early to confirm alignment with provincial standards and funding eligibility requirements.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num">2</div>
+      <span>Governance and Vendor Contracting</span>
+      <span class="phase-chevron">▼</span>
+    </div>
+    <div class="phase-body">
+      <ol>
+        <li>Establish a clinical steering committee with representation from medicine, nursing, pharmacy, and allied health — not just IT.</li>
+        <li>Negotiate performance-based contract terms: go-live milestones, interface delivery schedules, post-go-live satisfaction benchmarks, financial penalties for missed obligations.</li>
+        <li>Appoint a dedicated clinical informatics lead with both Oracle Health technical expertise and clinical workflow knowledge.</li>
+        <li>Create a privacy and information security working group to conduct PHIPA Privacy Impact Assessments for each new data flow.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num">3</div>
+      <span>Localization and Configuration</span>
+      <span class="phase-chevron">▼</span>
+    </div>
+    <div class="phase-body">
+      <ol>
+        <li>Build medication formularies against ODB codes and provincial drug programs from the start — do not adapt US content.</li>
+        <li>Develop clinical order sets collaboratively with frontline physicians and nurses using CMA guidelines and provincial college standards.</li>
+        <li>Configure CTAS in FirstNet (not ESI) and validate all ED documentation templates against Ontario-specific requirements.</li>
+        <li>Establish a CDS alert governance process before go-live: define alert tiers, set maximum daily alert targets per clinician, assign alert review ownership.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num">4</div>
+      <span>Integration Activation</span>
+      <span class="phase-chevron">▼</span>
+    </div>
+    <div class="phase-body">
+      <ol>
+        <li>Prioritize FHIR R4 as the default integration pattern for all new provincial connections — retire HL7 v2 interface development where counterpart systems support FHIR.</li>
+        <li>Build and maintain an interface registry documenting all active integrations, dependencies, contact points, and SLA commitments.</li>
+        <li>Deploy automated integration monitoring with alerting for message delivery failures and volume anomalies.</li>
+        <li>Pre-negotiate CIHI reporting extract validation before go-live — avoid DAD/NACRS submission failures in the post-live period.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <div class="phase-num">5</div>
+      <span>Optimization and Scale (Post Go-Live)</span>
+      <span class="phase-chevron">▼</span>
+    </div>
+    <div class="phase-body">
+      <ol>
+        <li>Staff a dedicated post-live optimization team for a minimum of 24 months — clinical informaticists, application analysts, a data/analytics specialist.</li>
+        <li>Activate HealtheIntent population health management for high-risk cohorts (diabetes, HF, COPD) within 12 months of go-live.</li>
+        <li>Launch a MyChart patient portal activation campaign with multilingual support — target 30% patient activation within 18 months.</li>
+        <li>Develop an SDOH screening workflow integrated into FirstNet triage — connect flags to social work referral pathways.</li>
+        <li>Conduct annual alert fatigue reviews: pull override rates by alert type, retire low-yield alerts, adjust tier classifications.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK WINS -->
+<section id="quickwins">
+  <h2>9. Quick-Win Improvement Opportunities</h2>
+  <div class="callout">
+    <strong>For existing Oracle Health deployments</strong>
+    These can be implemented without re-implementation and deliver measurable value within 6–12 months.
+  </div>
+  <table>
+    <tr><th>Quick win</th><th>What to do</th></tr>
+    <tr><td><span class="quick-win-badge">Safety</span><br><strong>Alert fatigue reduction</strong></td><td>Pull top 20 overridden alerts by volume; retire or downgrade tiers; target &lt;30 alerts per clinician per day</td></tr>
+    <tr><td><span class="quick-win-badge">Patient exp.</span><br><strong>MyChart activation</strong></td><td>Add portal activation to discharge workflow; multilingual setup; target high-volume chronic disease patients first</td></tr>
+    <tr><td><span class="quick-win-badge">Equity</span><br><strong>SDOH screening</strong></td><td>Add a 5-question SDOH screen to FirstNet triage; auto-trigger social work referral on positive screen</td></tr>
+    <tr><td><span class="quick-win-badge">Reliability</span><br><strong>Integration monitoring</strong></td><td>Deploy HL7 message monitoring dashboard; set up alerting for failed deliveries</td></tr>
+    <tr><td><span class="quick-win-badge">Future-proofing</span><br><strong>FHIR migration plan</strong></td><td>Audit all HL7 v2 interfaces; identify provincial counterparts supporting FHIR R4; build 3-year migration roadmap</td></tr>
+    <tr><td><span class="quick-win-badge">Population health</span><br><strong>Analytics activation</strong></td><td>Identify one high-burden cohort (e.g. CHF); activate HealtheIntent risk stratification; pilot proactive outreach</td></tr>
+  </table>
+  <div style="margin-top:28px;padding-top:20px;border-top:1px solid #e0e8f0;font-size:13px;color:#666;text-align:center">
+    Malharsingh Thakur &nbsp;·&nbsp; M.Sc. Computer Science, University of Windsor &nbsp;·&nbsp; Portfolio &amp; Personal Research &nbsp;·&nbsp; 2026
+  </div>
+</section>
+
+</div>
+<script>
+function togglePhase(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.phase-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+document.querySelectorAll('.phase-header').forEach((h,i) => {
+  const chevron = h.querySelector('.phase-chevron');
+  if (h.nextElementSibling.classList.contains('open')) chevron.style.transform = 'rotate(180deg)';
+});
+</script>
+</body>
+</html>
